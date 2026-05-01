@@ -31,7 +31,7 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; -webkit-tap-highlight-color: transparent; outline: none; }
-        body, html { width: 100vw; height: 100vh; background: var(--bg-dark); color: #fff; overflow-x: hidden; display: flex; justify-content: center; align-items: flex-start; }
+        body, html { width: 100vw; height: 100vh; background: var(--bg-dark); color: #fff; overflow: hidden; display: flex; justify-content: center; align-items: flex-start; }
 
         /* Cinematic Background */
         .bg-map {
@@ -49,23 +49,34 @@
         @keyframes pulseBg { 0% { opacity: 0.1; transform: scale(1); } 100% { opacity: 0.25; transform: scale(1.05); } }
 
         /* =========================================================================
-           CUSTOM TOAST NOTIFICATION SYSTEM
+           NATIVE-STYLE PUSH NOTIFICATIONS & TOASTS
            ========================================================================= */
-        #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; width: 90%; max-width: 400px; }
-        .toast { background: rgba(10,10,15,0.98); border-left: 4px solid var(--gold); color: #fff; padding: 15px 20px; border-radius: 8px; font-weight: 600; font-size: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); display: flex; align-items: center; gap: 10px; animation: toastSlideIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards, toastFadeOut 0.4s 3.5s forwards; }
+        #toast-container { position: fixed; top: 15px; left: 50%; transform: translateX(-50%); z-index: 9999999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; width: 100%; align-items: center; }
+        
+        .toast { background: rgba(10,10,15,0.98); border-left: 4px solid var(--gold); color: #fff; padding: 15px 20px; border-radius: 8px; font-weight: 600; font-size: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); display: flex; align-items: center; gap: 10px; max-width: 90%; animation: dropDown 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards, slideUp 0.4s 3.5s forwards; }
         .toast.success { border-color: var(--neon-green); }
         .toast.error { border-color: var(--danger); }
-        .toast i { font-size: 18px; }
-        @keyframes toastSlideIn { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes toastFadeOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-30px); } }
+        
+        /* Premium iOS/Android Style Push Banner */
+        .native-push { background: rgba(20, 20, 25, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 18px; padding: 15px; width: 92%; max-width: 400px; display: flex; gap: 15px; box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 20px rgba(212, 175, 55, 0.2); animation: dropDownPush 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards, slideUpPush 0.5s 6s forwards; }
+        .native-push-icon { width: 45px; height: 45px; min-width: 45px; border-radius: 12px; background: linear-gradient(135deg, var(--gold), #FFD700); display: flex; align-items: center; justify-content: center; color: #000; font-size: 24px; box-shadow: 0 5px 15px rgba(212,175,55,0.4); }
+        .native-push-content { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
+        .native-push-title { font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 800; color: #fff; margin: 0 0 3px 0; text-transform: uppercase; letter-spacing: 1px; display:flex; justify-content:space-between; }
+        .native-push-title span { font-size: 10px; color: var(--gold); font-weight: 500; text-transform: none; }
+        .native-push-body { font-family: 'Outfit', sans-serif; font-size: 13px; color: #ccc; margin: 0; line-height: 1.4; font-weight: 500; }
+
+        @keyframes dropDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-30px); } }
+        @keyframes dropDownPush { from { opacity: 0; transform: translateY(-50px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes slideUpPush { from { opacity: 1; transform: translateY(0) scale(1); } to { opacity: 0; transform: translateY(-50px) scale(0.95); } }
 
         /* =========================================================================
            VIEW MANAGER (Strict SPA)
            ========================================================================= */
-        .view-container { display: none; flex-direction: column; align-items: center; width: 100%; height: 100vh; padding: 40px 20px; animation: fadeInView 0.5s ease forwards; overflow-y: auto; }
+        .view-container { display: none; flex-direction: column; align-items: center; width: 100%; height: 100vh; padding: 30px 15px; animation: fadeInView 0.5s ease forwards; overflow-y: auto; }
         .active-view { display: flex !important; }
         @keyframes fadeInView { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
-        ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: rgba(0,0,0,0.5); } ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
+        ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.5); border-radius: 10px; }
 
         /* =========================================================================
            UI COMPONENTS (Inputs, Buttons, Cards)
@@ -75,34 +86,27 @@
 
         .input-group { width: 100%; position: relative; margin-bottom: 18px; }
         .input-group i { position: absolute; left: 18px; top: 18px; color: var(--gold); font-size: 18px; opacity: 0.8; }
-        .mn-input {
-            width: 100%; padding: 16px 16px 16px 50px; background: rgba(0,0,0,0.4);
-            border: 1px solid rgba(212,175,55,0.3); color: #fff; border-radius: 12px;
-            font-size: 16px; outline: none; transition: 0.3s ease; box-sizing: border-box; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
-        }
+        .mn-input { width: 100%; padding: 16px 16px 16px 50px; background: rgba(0,0,0,0.6); border: 1px solid rgba(212,175,55,0.3); color: #fff; border-radius: 12px; font-size: 16px; outline: none; transition: 0.3s ease; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); }
         .mn-input:focus { border-color: var(--gold); background: rgba(212,175,55,0.05); box-shadow: 0 0 15px var(--gold-glow), inset 0 2px 10px rgba(0,0,0,0.5); }
         .pin-style { letter-spacing: 12px; font-size: 24px; font-weight: 900; text-align: center; padding-left: 20px; font-family: 'Orbitron', sans-serif; color: var(--neon-cyan); }
         .pin-style + i { display: none; }
-        .pin-style::placeholder { color: #555; letter-spacing: 5px; font-size: 16px; font-family: 'Outfit', sans-serif; font-weight: 400; }
 
-        .mn-btn {
-            width: 100%; padding: 16px; border-radius: 12px; font-weight: 800; font-size: 15px; cursor: pointer; transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; gap: 10px; border: none; letter-spacing: 1px; text-transform: uppercase;
-        }
+        .mn-btn { width: 100%; padding: 16px; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; gap: 10px; border: none; letter-spacing: 1px; text-transform: uppercase; }
         .mn-btn:active { transform: scale(0.96); }
         .btn-gold { background: linear-gradient(135deg, var(--gold) 0%, #FFD700 100%); color: #000; box-shadow: 0 5px 25px var(--gold-glow); }
         .btn-green { background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); color: #fff; box-shadow: 0 5px 20px rgba(37, 211, 102, 0.3); }
         .btn-dark { background: rgba(0,0,0,0.5); border: 1px solid var(--gold); color: var(--gold); backdrop-filter: blur(5px); }
         .btn-danger { background: rgba(255,51,51,0.1); border: 1px solid var(--danger); color: var(--danger); margin-top: 15px; }
 
-        .dash-header { width: 100%; max-width: 600px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px dashed rgba(212,175,55,0.3); padding-bottom: 15px; }
-        .status-badge { background: rgba(0, 250, 154, 0.1); border: 1px solid var(--neon-green); color: var(--neon-green); padding: 6px 14px; border-radius: 30px; font-size: 11px; font-weight: 800; display: flex; align-items: center; gap: 6px; letter-spacing: 1px; box-shadow: 0 0 15px rgba(0, 250, 154, 0.2); transition: 0.5s; }
+        .dash-header { width: 100%; max-width: 600px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px dashed rgba(212,175,55,0.3); padding-bottom: 15px; }
+        .status-badge { background: rgba(0, 250, 154, 0.1); border: 1px solid var(--neon-green); color: var(--neon-green); padding: 6px 14px; border-radius: 30px; font-size: 11px; font-weight: 800; display: flex; align-items: center; gap: 6px; letter-spacing: 1px; box-shadow: 0 0 15px rgba(0, 250, 154, 0.2); }
         .status-badge.offline { background: rgba(255, 51, 51, 0.1); border-color: var(--danger); color: var(--danger); box-shadow: 0 0 15px rgba(255, 51, 51, 0.2); }
         
-        .card { width: 100%; max-width: 600px; background: rgba(10,10,15,0.85); border: 1px solid var(--glass-border); padding: 25px; border-radius: 16px; margin-bottom: 25px; backdrop-filter: blur(15px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .card h3 { color: var(--gold); font-family: 'Cinzel'; margin-bottom: 18px; font-size: 18px; border-bottom: 1px dashed rgba(212,175,55,0.3); padding-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+        .card { width: 100%; max-width: 600px; background: rgba(10,10,15,0.85); border: 1px solid var(--glass-border); padding: 20px; border-radius: 16px; margin-bottom: 20px; backdrop-filter: blur(15px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .card h3 { color: var(--gold); font-family: 'Cinzel'; margin-bottom: 15px; font-size: 16px; border-bottom: 1px dashed rgba(212,175,55,0.3); padding-bottom: 8px; display: flex; align-items: center; gap: 10px; }
 
         /* =========================================================================
-           PREMIUM TIMELINE, HISTORY & MAP
+           TIMELINE, HISTORY & MAP
            ========================================================================= */
         .client-list-item { background: rgba(0,0,0,0.6); padding: 15px; border-radius: 10px; border-left: 4px solid var(--neon-cyan); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
         .client-list-item:hover { background: rgba(212, 175, 55, 0.1); border-left-color: var(--gold); transform: translateY(-2px); }
@@ -111,42 +115,34 @@
         .client-list-actions { display: flex; align-items: center; gap: 12px; }
         .client-list-pin { font-family: 'Orbitron', monospace; font-size: 16px; color: var(--gold); font-weight: bold; background: rgba(212,175,55,0.1); padding: 6px 10px; border-radius: 6px; letter-spacing: 2px; }
         
-        .action-icon-btn { background: transparent; border: none; color: #666; font-size: 18px; cursor: pointer; transition: 0.3s; padding: 5px; }
+        .action-icon-btn { background: transparent; border: none; color: #888; font-size: 18px; cursor: pointer; transition: 0.3s; padding: 5px; }
         .action-icon-btn:hover { color: var(--neon-cyan); transform: scale(1.1); }
         .action-icon-btn.trash:hover { color: var(--danger); }
 
-        /* Advanced Map Wrapper */
-        .map-wrapper { width: 100%; height: 280px; border-radius: 12px; overflow: hidden; border: 2px solid #222; position: relative; background: #050505; margin-bottom: 0px; }
+        .map-wrapper { width: 100%; height: 250px; border-radius: 12px; overflow: hidden; border: 2px solid #222; position: relative; background: #050505; margin-bottom: 10px; }
         .map-iframe { width: 100%; height: 100%; border: none; filter: invert(100%) hue-rotate(180deg) brightness(85%) contrast(110%) sepia(30%); pointer-events: none; transition: 1s ease; opacity: 0; }
         .map-iframe.loaded { opacity: 1; }
         .map-loader { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: var(--gold); font-size: 13px; text-align: center; font-weight: bold; letter-spacing: 1px; z-index: 1; }
-        .map-radar-ring { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 150px; height: 150px; border-radius: 50%; border: 2px solid rgba(0, 250, 154, 0.4); pointer-events: none; animation: mapPing 2.5s infinite; z-index: 2; display: none; }
-        @keyframes mapPing { 0% { width: 0; height: 0; opacity: 1; } 100% { width: 300px; height: 300px; opacity: 0; } }
 
-        /* Advanced Location Display */
-        .location-display { background: rgba(212,175,55,0.05); border: 1px solid rgba(212,175,55,0.2); border-radius: 8px; padding: 12px; margin-top: 15px; margin-bottom: 15px; display: flex; align-items: center; gap: 12px; }
-        .location-icon { width: 35px; height: 35px; border-radius: 50%; background: rgba(212,175,55,0.15); display: flex; justify-content: center; align-items: center; color: var(--gold); font-size: 16px; }
-        .location-text h4 { margin: 0 0 3px 0; font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
-        .location-text p { margin: 0; font-size: 15px; color: #fff; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px; }
-
-        .telemetrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px; }
+        .telemetrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
         .metric-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px; text-align: center; }
         .metric-label { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
-        .metric-value { font-family: 'Orbitron', sans-serif; font-size: 15px; font-weight: 700; color: var(--neon-cyan); }
+        .metric-value { font-family: 'Orbitron', sans-serif; font-size: 14px; font-weight: 700; color: var(--neon-cyan); }
 
         /* Public Client Timeline Feed */
-        .timeline-feed { padding-left: 20px; position: relative; max-height: 400px; overflow-y: auto; padding-right: 10px; }
-        .timeline-item { position: relative; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px dashed rgba(255,255,255,0.05); animation: slideInLeft 0.4s ease forwards; }
+        .timeline-feed { padding-left: 20px; position: relative; max-height: 350px; overflow-y: auto; padding-right: 10px; }
+        .timeline-item { position: relative; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px dashed rgba(255,255,255,0.05); animation: slideInLeft 0.4s ease forwards; display: flex; justify-content: space-between; align-items: flex-start; }
         .timeline-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
         .timeline-item::before { content: ''; position: absolute; left: -26px; top: 3px; width: 12px; height: 12px; border-radius: 50%; background: var(--neon-green); box-shadow: 0 0 10px var(--neon-green); border: 2px solid #111; z-index: 2; }
         .timeline-item::after { content: ''; position: absolute; left: -21px; top: 15px; width: 2px; height: 100%; background: rgba(0, 250, 154, 0.3); z-index: 1; }
         .timeline-item:last-child::after { display: none; }
         
+        .update-content { width: 85%; }
         .update-time { font-size: 10px; color: var(--gold); margin-bottom: 5px; font-family: 'Orbitron', sans-serif; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
         .update-text { font-size: 14px; color: #eee; line-height: 1.5; font-weight: 500; }
 
         .quick-actions { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
-        .quick-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.4); color: #fff; padding: 8px 12px; border-radius: 8px; font-size: 11px; cursor: pointer; transition: 0.3s; font-family: 'Orbitron', sans-serif; }
+        .quick-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.4); color: #fff; padding: 8px 12px; border-radius: 8px; font-size: 11px; cursor: pointer; transition: 0.3s; font-family: 'Orbitron', sans-serif; flex-grow: 1; text-align: center; }
         .quick-btn:hover { background: rgba(212,175,55,0.2); border-color: var(--gold); color: var(--gold); }
         
         /* Admin Target Lock Banner */
@@ -197,7 +193,6 @@
             <div class="status-badge"><i class="fas fa-link"></i> DB SYNCED</div>
         </div>
 
-        <!-- Section 1: Provision / Update PIN -->
         <div class="card">
             <h3><i class="fas fa-key"></i> Provision / Update Client</h3>
             <p style="font-size:11px; color:#aaa; margin-bottom:15px;">Entering an existing number will elegantly UPDATE their PIN without deleting history.</p>
@@ -221,7 +216,6 @@
             </div>
         </div>
 
-        <!-- Section 2: Sequential Network History -->
         <div class="card">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 5px;">
                 <h3 style="margin:0; border:none; padding:0;"><i class="fas fa-history"></i> Live Network Roster</h3>
@@ -229,7 +223,7 @@
             </div>
             <p style="font-size:11px; color:#888; margin-bottom:15px;">Click any client below to open their Targeted Live Session for GPS & Comms.</p>
             
-            <div id="admin-active-list" style="max-height: 350px; overflow-y: auto; padding-right: 5px;">
+            <div id="admin-active-list" style="max-height: 400px; overflow-y: auto; padding-right: 5px;">
                 <div style="text-align:center; color:#555; font-size:13px; padding:20px;"><i class="fas fa-circle-notch fa-spin"></i> Fetching history logs...</div>
             </div>
         </div>
@@ -257,6 +251,13 @@
             </div>
         </div>
 
+        <!-- 📍 NEW: See Client's Pinned Location -->
+        <div class="card" id="admin-client-loc-card" style="display:none; border-color:var(--neon-green); background:rgba(0,250,154,0.05);">
+            <h3 style="color:var(--neon-green); border-bottom-color:rgba(0,250,154,0.3);"><i class="fas fa-street-view"></i> Target Event Location</h3>
+            <p style="font-size:12px; color:#aaa; margin-bottom:10px;">The client has shared their exact event coordinates.</p>
+            <a id="admin-view-client-map" href="#" target="_blank" class="mn-btn btn-green" style="font-size:13px; padding:12px; text-decoration:none;"><i class="fas fa-map-marker-alt"></i> OPEN CLIENT LOCATION IN MAPS</a>
+        </div>
+
         <!-- Session: GPS Telemetry -->
         <div class="card">
             <h3 style="color:var(--neon-cyan); border-bottom-color:rgba(0, 229, 255, 0.3);"><i class="fas fa-satellite"></i> Direct GPS Uplink</h3>
@@ -267,19 +268,11 @@
                 <div class="metric-box"><div class="metric-label">Accuracy</div><div class="metric-value" id="a-acc">0 m</div></div>
                 <div class="metric-box"><div class="metric-label">Pings</div><div class="metric-value" id="a-ping">0</div></div>
             </div>
-            
-            <div id="admin-ai-location" class="location-display" style="display:none; border-color:var(--neon-cyan); background:rgba(0,229,255,0.05);">
-                <div class="location-icon" style="color:var(--neon-cyan); background:rgba(0,229,255,0.1);"><i class="fas fa-map-marked-alt"></i></div>
-                <div class="location-text">
-                    <h4>Current Area Detected</h4>
-                    <p id="a-loc-name">Resolving coordinates...</p>
-                </div>
-            </div>
 
             <button class="mn-btn btn-dark" style="border-color:var(--neon-cyan); color:var(--neon-cyan);" id="btn-broadcast" onclick="toggleLocationBroadcast()"><i class="fas fa-location-arrow"></i> INITIATE BROADCAST TO TARGET</button>
         </div>
 
-        <!-- Session: Push Update -->
+        <!-- Session: Push Update & Manage Comms -->
         <div class="card">
             <h3 style="color:var(--neon-cyan); border-bottom-color:rgba(0, 229, 255, 0.3);"><i class="fas fa-comment-alt"></i> Direct Comms Feed</h3>
             
@@ -292,14 +285,22 @@
 
             <textarea id="admin-update-text" class="mn-input" rows="2" style="resize:none; padding:15px;" placeholder="Or type a custom update here..."></textarea>
             <button class="mn-btn btn-gold" style="margin-top:12px; background: linear-gradient(135deg, var(--neon-cyan) 0%, #0088cc 100%); box-shadow: 0 5px 25px rgba(0,229,255,0.3);" id="btn-push-update" onclick="adminPushUpdate()"><i class="fas fa-paper-plane"></i> TRANSMIT TO TARGET</button>
+            
+            <!-- Admin Manage Active Updates -->
+            <div style="margin-top: 25px; padding-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1);">
+                <h4 style="font-size:12px; color:#aaa; margin-bottom:10px; text-transform:uppercase;">Manage Sent Updates:</h4>
+                <div id="admin-manage-updates-area" class="timeline-feed" style="max-height:200px;">
+                    <!-- Updates populate here -->
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- ========================================================================= -->
     <!-- VIEW 4: CLIENT LIVE DASHBOARD -->
     <!-- ========================================================================= -->
-    <div id="view-client" class="view-container">
-        <div class="dash-header">
+    <div id="view-client" class="view-container" style="padding: 20px 10px;">
+        <div class="dash-header" style="max-width:100%; width:100%;">
             <div style="width:70%;">
                 <h2 id="client-dash-event" style="color:var(--gold); font-family:'Cinzel'; margin:0; font-size:20px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Event Overview</h2>
                 <span style="font-size:12px; color:#888;">Authorized: <span id="client-dash-name" style="color:#fff;">Loading...</span></span>
@@ -307,8 +308,19 @@
             <div class="status-badge" id="client-conn-status"><i class="fas fa-circle fa-beat"></i> ONLINE</div>
         </div>
 
+        <!-- 📍 NEW: Client Send Location to HQ -->
+        <div class="card" style="max-width:100%; width:100%; padding: 15px; background:rgba(0, 250, 154, 0.05); border-color:var(--neon-green);">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <h4 style="color:var(--neon-green); margin:0; font-size:14px;"><i class="fas fa-street-view"></i> Event Location</h4>
+                    <p style="font-size:11px; color:#aaa; margin:0;">Send your exact map pin to the logistics team.</p>
+                </div>
+                <button class="mn-btn btn-green" style="width:auto; padding: 10px 15px; font-size:12px;" onclick="clientShareLocation()"><i class="fas fa-share-location"></i> SHARE</button>
+            </div>
+        </div>
+
         <!-- Map & Telemetrics Area -->
-        <div class="card" style="padding: 15px;">
+        <div class="card" style="max-width:100%; width:100%; padding: 15px;">
             <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom: 12px; border-bottom: 1px dashed rgba(255,255,255,0.1); margin-bottom: 15px;">
                 <h3 style="margin:0; border:none; padding:0; font-size:16px;"><i class="fas fa-crosshairs"></i> Live Target Tracking</h3>
                 <span id="client-gps-time" style="font-size:11px; color:#888; font-family:'Orbitron';">Awaiting Signal...</span>
@@ -322,30 +334,21 @@
 
             <div class="map-wrapper">
                 <div class="map-loader" id="map-loader-text"><i class="fas fa-satellite-dish fa-spin fa-2x" style="margin-bottom:10px;"></i><br>SEARCHING FOR SATELLITE...</div>
-                <div class="map-radar-ring" id="map-radar-ring"></div>
                 <iframe id="client-map-iframe" class="map-iframe" src="" onload="this.classList.add('loaded')"></iframe>
             </div>
             
-            <div class="location-display" id="client-location-display" style="display:none;">
-                <div class="location-icon"><i class="fas fa-map-marker-alt"></i></div>
-                <div class="location-text">
-                    <h4>Nearest Detected Area</h4>
-                    <p id="c-location-name">Syncing AI Location...</p>
-                </div>
-            </div>
-
             <a id="ext-map-link" href="#" target="_blank" class="mn-btn btn-dark" style="font-size:13px; padding:12px; text-decoration:none; display:none; margin-top:10px;"><i class="fas fa-external-link-alt"></i> OPEN IN GOOGLE MAPS APP</a>
         </div>
 
         <!-- Premium Timeline Updates Area -->
-        <div class="card">
-            <h3 style="margin-bottom: 25px;"><i class="fas fa-bolt"></i> Logistics Comms Feed</h3>
-            <div id="client-updates-area" class="timeline-feed">
+        <div class="card" style="max-width:100%; width:100%; flex-grow:1; display:flex; flex-direction:column;">
+            <h3 style="margin-bottom: 20px;"><i class="fas fa-bolt"></i> Logistics Comms Feed</h3>
+            <div id="client-updates-area" class="timeline-feed" style="flex-grow:1; max-height:none;">
                 <div style="text-align:center; color:#555; font-size:13px; padding:20px; border:none; margin-left:-20px;"><i class="fas fa-circle-notch fa-spin"></i> Listening for HQ transmissions...</div>
             </div>
         </div>
 
-        <button class="mn-btn btn-danger" onclick="systemLogout()"><i class="fas fa-power-off"></i> DISCONNECT TERMINAL</button>
+        <button class="mn-btn btn-danger" style="max-width:100%; width:100%;" onclick="systemLogout()"><i class="fas fa-power-off"></i> DISCONNECT TERMINAL</button>
     </div>
 
 
@@ -353,7 +356,7 @@
     <!-- JAVASCRIPT & FIREBASE ENGINE -->
     <!-- ========================================================================= -->
     <script>
-        // --- 1. PREMIUM AUDIO & NOTIFICATIONS ---
+        // --- 1. PREMIUM AUDIO & PUSH NOTIFICATIONS ---
         function requestNotificationPermission() {
             if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
                 Notification.requestPermission();
@@ -365,21 +368,36 @@
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
                 const osc = ctx.createOscillator(); const gain = ctx.createGain();
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(880, ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 1);
-                gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                osc.frequency.setValueAtTime(880, ctx.currentTime); // High
+                osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.5); // Low Drop
+                gain.gain.setValueAtTime(0.4, ctx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1.5);
                 osc.connect(gain); gain.connect(ctx.destination);
                 osc.start(); osc.stop(ctx.currentTime + 1.5);
             } catch(e) {}
         }
 
-        function triggerPushNotification(title, body) {
+        function showPushNotification(title, body) {
             playPremiumChime();
-            showToast(title, 'success');
+            
+            // Native Web API (If allowed)
             if ("Notification" in window && Notification.permission === "granted") {
                 new Notification(title, { body: body, icon: "https://cdn-icons-png.flaticon.com/512/814/814513.png" });
             }
+
+            // High-End In-App Dropdown HUD
+            const container = document.getElementById('toast-container');
+            const push = document.createElement('div');
+            push.className = 'native-push';
+            push.innerHTML = `
+                <div class="native-push-icon"><i class="fas fa-bell"></i></div>
+                <div class="native-push-content">
+                    <div class="native-push-title">${title} <span>Just Now</span></div>
+                    <p class="native-push-body">${body}</p>
+                </div>
+            `;
+            container.prepend(push); // Put at top
+            setTimeout(() => { push.remove(); }, 6500);
         }
 
         function showToast(message, type = 'success') {
@@ -392,7 +410,7 @@
             setTimeout(() => { toast.remove(); }, 4000);
         }
 
-        // --- 2. FIREBASE CONFIGURATION ---
+        // --- 2. FIREBASE CONFIGURATION (Direct DB connection) ---
         const firebaseConfig = {
             apiKey: "AIzaSyCZP-zuJNDW9S4sD_d4R_-nrTMjf0HD4MM",
             authDomain: "mnd-tracking.firebaseapp.com",
@@ -413,11 +431,10 @@
         let geoWatchId = null; 
         let activeClientData = null; 
         let pingCount = 0;
-        let lastKnownTextUpdate = 0;
+        let lastKnownTextUpdate = Date.now(); // Init high to prevent initial load spam
         
-        // Active Target Variables
-        let currentClientPhone = ""; // The phone number the client logged in with
-        let currentAdminTargetPhone = ""; // The phone number the Admin clicked to track
+        let currentClientPhone = ""; 
+        let currentAdminTargetPhone = ""; 
 
         // --- 4. VIEW ROUTER ---
         function switchView(viewId) {
@@ -462,8 +479,8 @@
                         document.getElementById('client-dash-name').innerText = clientData.name;
                         document.getElementById('client-dash-event').innerText = clientData.event;
                         
-                        // Set the specific client phone and start listening specifically to their data
-                        currentClientPhone = clientData.phone;
+                        currentClientPhone = phone;
+                        lastKnownTextUpdate = Date.now(); // Reset tracker on login
                         startClientWatchListeners(); 
                         switchView('view-client');
                         showToast(`Welcome, ${clientData.name}`);
@@ -499,7 +516,7 @@
 
             activeClientData = { name, phone, event, pin: finalPin, timestamp: timestamp, dateStr: humanDate };
 
-            // Use .update() instead of .set() so we don't wipe out their existing location/updates history
+            // .update() prevents deleting existing location/updates history!
             db.ref('trackings/' + phone).update(activeClientData).then(() => {
                 document.getElementById('display-new-pin').innerText = finalPin;
                 document.getElementById('admin-pin-result').style.display = 'block';
@@ -517,7 +534,7 @@
 
         function adminShareWhatsApp() {
             if(!activeClientData) return;
-            const msg = `👑 *MAA NIRMALA DJ - CLOUD TRACKING* 👑\n\nHello ${activeClientData.name},\nYour logistics for *${activeClientData.event}* are now online.\n\nAccess the Live Tracker here:\nhttps://maa-nirmala-dj.github.io/Live-tracking/\n\n📱 *Login Number:* ${activeClientData.phone}\n🔐 *Tracking PIN:* ${activeClientData.pin}`;
+            const msg = `👑 *MAA NIRMALA DJ - LIVE TRACKING* 👑\n\nHello ${activeClientData.name},\nYour logistics for *${activeClientData.event}* are active.\n\n*How to track:*\n1. Click the link and open the website.\n2. At the bottom right corner (above the MND AI button), click the 'Live Location' button to open the tracking portal.\n3. Enter your registered mobile number and 6-digit PIN to track.\n\n🔗 *Link:* https://maa-nirmala-dj.github.io/Live-tracking/\n📱 *Login Number:* ${activeClientData.phone}\n🔐 *Tracking PIN:* ${activeClientData.pin}`;
             const cleanPhone = activeClientData.phone.replace(/\D/g,'');
             window.open(`https://wa.me/91${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
         }
@@ -567,31 +584,59 @@
             document.getElementById('session-c-phone').innerText = phone;
             switchView('view-admin-session');
             showToast(`Target Locked: ${name}`, 'success');
+
+            // 1. Listen for Client's Location Share
+            db.ref(`trackings/${currentAdminTargetPhone}/client_location`).on('value', (snap) => {
+                const card = document.getElementById('admin-client-loc-card');
+                if(snap.exists()) {
+                    card.style.display = 'block';
+                    const loc = snap.val();
+                    document.getElementById('admin-view-client-map').href = `https://www.google.com/maps/search/?api=1&query=${loc.lat},${loc.lng}`;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // 2. Listen to sent updates to allow deletion
+            db.ref(`trackings/${currentAdminTargetPhone}/updates`).orderByChild('timestamp').on('value', (snap) => {
+                const area = document.getElementById('admin-manage-updates-area');
+                if(snap.exists()) {
+                    let html = '';
+                    const updates = [];
+                    snap.forEach(child => updates.push({ key: child.key, ...child.val() }));
+                    
+                    updates.reverse().forEach(u => {
+                        html += `
+                            <div class="timeline-item" style="padding-bottom:10px; margin-bottom:10px;">
+                                <div class="update-content">
+                                    <div class="update-time">${u.time}</div>
+                                    <div class="update-text">${u.text}</div>
+                                </div>
+                                <button class="action-icon-btn trash" onclick="adminDeleteUpdate('${u.key}')"><i class="fas fa-times-circle"></i></button>
+                            </div>
+                        `;
+                    });
+                    area.innerHTML = html;
+                } else {
+                    area.innerHTML = '<div style="font-size:12px; color:#555; text-align:center;">No updates sent yet.</div>';
+                }
+            });
         }
 
         function closeAdminSession() {
             if(geoWatchId !== null) toggleLocationBroadcast(); // Stop GPS if running
+            if(currentAdminTargetPhone) {
+                db.ref(`trackings/${currentAdminTargetPhone}/client_location`).off();
+                db.ref(`trackings/${currentAdminTargetPhone}/updates`).off();
+            }
             currentAdminTargetPhone = "";
             switchView('view-admin');
         }
 
-        // --- 8. AI REVERSE GEOCODING (Nearest Village) ---
-        async function fetchLocationName(lat, lng) {
-            try {
-                const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=14`);
-                const data = await res.json();
-                if(data && data.address) {
-                    return data.address.village || data.address.town || data.address.city || data.address.county || data.display_name.split(',')[0];
-                }
-                return "Unknown Zone";
-            } catch(e) { return "Coordinates Locked"; }
-        }
-
-        // --- 9. ADMIN: TARGETED GPS TELEMETRY ---
+        // --- 8. ADMIN: TARGETED GPS TELEMETRY ---
         function toggleLocationBroadcast() {
             const btn = document.getElementById('btn-broadcast');
             const metrics = document.getElementById('admin-telemetrics');
-            const locDisp = document.getElementById('admin-ai-location');
 
             if(!currentAdminTargetPhone) return;
 
@@ -601,9 +646,8 @@
                 geoWatchId = null; pingCount = 0;
                 btn.innerHTML = '<i class="fas fa-location-arrow"></i> INITIATE BROADCAST TO TARGET';
                 btn.style.background = "transparent"; btn.style.color = "var(--neon-cyan)"; btn.style.borderColor = "var(--neon-cyan)";
-                metrics.style.display = 'none'; locDisp.style.display = 'none';
+                metrics.style.display = 'none';
                 
-                // Set ONLY this specific client's GPS to offline
                 db.ref(`trackings/${currentAdminTargetPhone}/location/status`).set('offline').catch(err => console.warn(err)); 
                 showToast("Transmission Terminated", "error");
             } else {
@@ -612,10 +656,10 @@
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ACQUIRING SATELLITES...';
                 
                 geoWatchId = navigator.geolocation.watchPosition(
-                    async (pos) => {
+                    (pos) => {
                         btn.innerHTML = '<i class="fas fa-times-circle"></i> STOP BROADCASTING';
                         btn.style.background = "rgba(255,51,51,0.1)"; btn.style.color = "var(--danger)"; btn.style.borderColor = "var(--danger)";
-                        metrics.style.display = 'grid'; locDisp.style.display = 'flex';
+                        metrics.style.display = 'grid'; 
                         
                         pingCount++;
                         const speedKmh = pos.coords.speed ? (pos.coords.speed * 3.6).toFixed(1) : 0;
@@ -624,20 +668,11 @@
                         document.getElementById('a-acc').innerText = "±" + Math.round(pos.coords.accuracy) + "m";
                         document.getElementById('a-ping').innerText = pingCount;
 
-                        let locName = "Resolving...";
-                        if(pingCount % 10 === 1) { 
-                            locName = await fetchLocationName(pos.coords.latitude, pos.coords.longitude);
-                            document.getElementById('a-loc-name').innerText = locName;
-                        } else {
-                            locName = document.getElementById('a-loc-name').innerText;
-                        }
-
                         // Push ONLY to this specific client's location node
                         db.ref(`trackings/${currentAdminTargetPhone}/location`).set({
                             status: 'online', lat: pos.coords.latitude, lng: pos.coords.longitude,
                             speed: speedKmh, heading: pos.coords.heading ? Math.round(pos.coords.heading) + "°" : "N/A",
-                            accuracy: Math.round(pos.coords.accuracy), time: new Date().toLocaleTimeString(),
-                            locationName: locName
+                            accuracy: Math.round(pos.coords.accuracy), time: new Date().toLocaleTimeString()
                         });
                         
                         if(pingCount === 1) showToast("Satellite Uplink Established");
@@ -652,7 +687,7 @@
             }
         }
 
-        // --- 10. ADMIN: TARGETED COMMS UPDATE ---
+        // --- 9. ADMIN: TARGETED COMMS UPDATE ---
         function setQuickUpdate(msg) { document.getElementById('admin-update-text').value = msg; }
 
         function adminPushUpdate() {
@@ -676,13 +711,35 @@
             });
         }
 
+        function adminDeleteUpdate(key) {
+            if(!currentAdminTargetPhone) return;
+            db.ref(`trackings/${currentAdminTargetPhone}/updates/${key}`).remove()
+            .then(() => showToast("Update Deleted"))
+            .catch(e => showToast("Failed to delete", "error"));
+        }
+
+        // --- 10. CLIENT: SHARE LOCATION TO HQ ---
+        function clientShareLocation() {
+            if(!currentClientPhone) return;
+            if(!navigator.geolocation) { showToast("GPS not supported on this device.", "error"); return; }
+            
+            showToast("Acquiring your location...");
+            navigator.geolocation.getCurrentPosition((pos) => {
+                db.ref(`trackings/${currentClientPhone}/client_location`).set({
+                    lat: pos.coords.latitude, lng: pos.coords.longitude, time: Date.now()
+                }).then(() => {
+                    showToast("Location Shared with HQ Successfully!");
+                });
+            }, (err) => {
+                showToast("Failed to get location. Ensure GPS is ON.", "error");
+            }, { enableHighAccuracy: true });
+        }
+
         // --- 11. CLIENT: TARGETED WATCH LISTENERS ---
         let lastKnownLat = 0; let lastKnownLng = 0;
 
         function startClientWatchListeners() {
             if(!currentClientPhone) return;
-
-            lastKnownTextUpdate = Date.now();
 
             // Listen ONLY to my specific location node
             db.ref(`trackings/${currentClientPhone}/location`).on('value', (snapshot) => {
@@ -696,46 +753,41 @@
                     document.getElementById('c-accuracy').innerText = "±" + data.accuracy + "m";
                     
                     document.getElementById('map-loader-text').style.display = 'none';
-                    document.getElementById('map-radar-ring').style.display = 'block';
                     document.getElementById('ext-map-link').style.display = 'block';
                     document.getElementById('ext-map-link').href = `https://www.google.com/maps/search/?api=1&query=${data.lat},${data.lng}`;
 
-                    const locDisp = document.getElementById('client-location-display');
-                    if(data.locationName && data.locationName !== "Resolving...") {
-                        locDisp.style.display = 'flex';
-                        document.getElementById('c-location-name').innerText = data.locationName;
-                    }
-
                     if(Math.abs(data.lat - lastKnownLat) > 0.0001 || Math.abs(data.lng - lastKnownLng) > 0.0001) {
-                        const mapUrl = `https://maps.google.com/maps?q=${data.lat},${data.lng}&z=15&output=embed`;
+                        const mapUrl = `https://maps.google.com/maps?q=${data.lat},${data.lng}&z=16&output=embed`;
                         document.getElementById('client-map-iframe').src = mapUrl;
                         lastKnownLat = data.lat; lastKnownLng = data.lng;
                     }
                 } else {
                     badge.innerHTML = '<i class="fas fa-exclamation-circle"></i> SIGNAL LOST'; badge.className = 'status-badge offline';
                     document.getElementById('client-gps-time').innerText = "Target Offline";
-                    document.getElementById('map-radar-ring').style.display = 'none';
                 }
             });
 
-            // Listen ONLY to my specific updates node
-            db.ref(`trackings/${currentClientPhone}/updates`).orderByChild('timestamp').limitToLast(15).on('value', (snapshot) => {
+            // Listen ONLY to my specific updates node (Renders multiple timeline items)
+            db.ref(`trackings/${currentClientPhone}/updates`).orderByChild('timestamp').limitToLast(20).on('value', (snapshot) => {
                 const feedArea = document.getElementById('client-updates-area');
                 if(snapshot.exists()) {
                     let html = '';
                     const updates = [];
                     snapshot.forEach(child => updates.push(child.val()));
                     
+                    // Render newest at top
                     updates.reverse().forEach((update, index) => {
                         html += `
                             <div class="timeline-item">
-                                <div class="update-time">${update.time}</div>
-                                <div class="update-text">${update.text}</div>
+                                <div class="update-content">
+                                    <div class="update-time">${update.time}</div>
+                                    <div class="update-text">${update.text}</div>
+                                </div>
                             </div>
                         `;
-                        // Trigger Push Notification for new updates
+                        // Trigger Premium Push Notification for strictly new updates
                         if (index === 0 && update.timestamp > lastKnownTextUpdate) {
-                            triggerPushNotification("MND Logistics Update", update.text);
+                            showPushNotification("MND Logistics Update", update.text);
                             lastKnownTextUpdate = update.timestamp; 
                         }
                     });
@@ -756,14 +808,16 @@
                 db.ref(`trackings/${currentClientPhone}/location`).off();
                 db.ref(`trackings/${currentClientPhone}/updates`).off();
             }
+            if(currentAdminTargetPhone) {
+                db.ref(`trackings/${currentAdminTargetPhone}/client_location`).off();
+                db.ref(`trackings/${currentAdminTargetPhone}/updates`).off();
+            }
             
             currentAdminTargetPhone = "";
             currentClientPhone = "";
             
             document.getElementById('client-map-iframe').src = "";
             document.getElementById('map-loader-text').style.display = 'block';
-            document.getElementById('map-radar-ring').style.display = 'none';
-            document.getElementById('client-location-display').style.display = 'none';
             document.getElementById('ext-map-link').style.display = 'none';
             document.getElementById('client-gps-time').innerText = "Awaiting Signal...";
             
